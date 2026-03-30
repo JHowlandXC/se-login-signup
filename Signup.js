@@ -1,41 +1,28 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './styles.css';
 
 function Signup() {
-    const [formData, setFormData] = useState({ f_name: '', l_name: '', username: '', password: '' });
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const response = await fetch('http://localhost:5000/signup', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        });
-        const msg = await response.text();
-        alert(msg);
+    const handleSignUp = (event) => {
+        axios.post('http://localhost:9000/createUser', { firstName, lastName, username, password })
+            .then((res) => alert('Signup Successful!'))
+            .catch((err) => alert('Error: ' + err.response.data));
     };
 
     return (
-        <div className="container">
+        <div className="form-container">
             <h1>SignUp</h1>
-            <form onSubmit={handleSubmit}>
-                <label>First Name:</label>
-                <input type="text" onChange={(e) => setFormData({...formData, f_name: e.target.value})} required />
-                
-                <label>Last Name:</label>
-                <input type="text" onChange={(e) => setFormData({...formData, l_name: e.target.value})} required />
-                
-                <label>Username (UserID):</label>
-                <input type="text" onChange={(e) => setFormData({...formData, username: e.target.value})} required />
-                
-                <label>Password:</label>
-                <input type="password" onChange={(e) => setFormData({...formData, password: e.target.value})} required />
-                
-                <button type="submit">Submit</button>
-            </form>
-            <a href="/login">Login Page</a>
+            <input type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+            <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+            <input type="text" placeholder="UserID" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <button type="button" onClick={handleSignUp}>Signup</button>
         </div>
     );
 }
-
 export default Signup;

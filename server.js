@@ -1,68 +1,57 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-
 const app = express();
-
-// Middleware
-app.use(express.json()); // Essential for reading req.body
-app.use(cors());         // Essential for React to talk to Node
+app.use(express.json());
+app.use(cors());
 
 // --- MONGODB ATLAS CONNECTION ---
 const dbUser = "jhowland022";
-const dbPass = encodeURIComponent("S1mp13loo!#@"); // Handles special characters
-const dbName = "homework2_db"; // You can name this whatever you like
+const dbPass = encodeURIComponent("S1mp13loo!#@"); 
+const mongoString = `mongodb+srv://${dbUser}:${dbPass}@homework2.sjonggp.mongodb.net/lab?retryWrites=true&w=majority`;
 
-const mongoURI = `mongodb+srv://${dbUser}:${dbPass}@homework2.sjonggp.mongodb.net/${dbName}?retryWrites=true&w=majority`;
-
-mongoose.connect(mongoURI)
-    .then(() => console.log("Connected to MongoDB Atlas!"))
-    .catch((err) => console.error("Could not connect to MongoDB:", err));
-
+mongoose.connect(mongoString);
+const database = mongoose.connection;
+database.on('error', (error) => console.log("MongoDB Error:", error));
+database.once('connected', () => console.log('Database Connected Successfully'));
 // --- USER SCHEMA (Requirement: f_name, l_name, username, password) ---
-const userSchema = new mongoose.Schema({
-    f_name: { type: String, required: true },
-    l_name: { type: String, required: true },
+const mongoose = require("mongoose");
+
+const UserSchema = new mongoose.Schema({
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true }
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", UserSchema);
+module.exports = User;
 
 // --- API ROUTES ---
 
-// 1. SIGNUP: Create a user document
-app.post('/signup', async (req, res) => {
+// SIGNUP ROUTE
+app.post('/createUser', async (req, res) => {
+    const un = req.body.username;
     try {
-        const { f_name, l_name, username, password } = req.body;
-        const newUser = new User({ f_name, l_name, username, password });
-        await newUser.save();
-        res.status(201).send("User Created Successfully");
-    } catch (err) {
-        res.status(400).send("Error: Username might already be taken.");
-    }
-});
-
-// 2. LOGIN: Check username and match passwords
-app.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username: username });
-
-        if (user && user.password === password) {
-            // Success acknowledgement
-            res.status(200).send("Login Successful!");
+        const result = await User.exists({ username: un });
+        if (result === null) {
+            const user = new User(req.body);
+            await user.save();
+            res.send(user);
         } else {
-            // Failure prompt
-            res.status(401).send("Login Failed: Invalid credentials.");
+            res.status(500).send("Username already exists");
         }
-    } catch (err) {
-        res.status(500).send("Server Error");
+    } catch (error) {
+        res.status(500).send(error);
     }
 });
 
-// --- START SERVER ---
-const PORT = 5000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+// LOGIN ROUTE
+app.get('/getUser', async (req, res) => {
+    const { username, password } = req.query;
+    try {
+        const user = await User.findOne({ username, password });
+        res.send(user); 
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
+
+app.listen(9000, () => console.log('Server running on port 9000'));
