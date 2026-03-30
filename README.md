@@ -10,8 +10,14 @@ Homework for practicing html and css. Creating a login and a signup page in html
 - **Responsive Design**: Uses CSS Flexbox to center forms and ensure consistency across both pages.
 
 ### Project Structure
-se-login-signup/
-├── login.html    # The main entry point for user login
-├── signup.html   # Registration page for new users
-├── styles.css    # Shared stylesheet for consistent branding
-└── README.md     # Project documentation
+source_code/
+├── server/
+│   ├── server.js
+│   └── package.json
+└── client/
+    ├── src/
+    │   ├── Login.js
+    │   ├── Signup.js
+    │   ├── App.js
+    │   └── styles.css
+    └── package.json
