@@ -21,8 +21,7 @@ const database = mongoose.connection;
 
 database.on('error', (error) => console.log("MongoDB Error:", error));
 database.once('connected', () => console.log('Database Connected Successfully'));
-// --- USER SCHEMA (Requirement: f_name, l_name, username, password) ---
-const mongoose = require("mongoose");
+
 
 const UserSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
@@ -30,9 +29,6 @@ const UserSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true }
 });
-
-const User = mongoose.model("User", UserSchema);
-module.exports = User;
 
 
 
