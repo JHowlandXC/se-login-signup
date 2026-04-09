@@ -1,4 +1,4 @@
-// 1. Imports (These MUST be at the very top)
+// Imports 
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -6,12 +6,12 @@ const User = require('./userSchema'); // Ensure userSchema.js is in the same fol
 
 const app = express();
 
-// 2. Middleware
+// Middleware
 app.use(express.json());
 app.use(cors());
 
-// 3. MongoDB Connection
-// Using your Atlas URI with encoded password for special characters
+// MongoDB Connection
+// Using  Atlas URI with encoded password for special characters
 const dbUser = "jhowland022";
 const dbPass = encodeURIComponent("S1mp13loo!#@"); 
 const mongoString = `mongodb+srv://${dbUser}:${dbPass}@homework2.sjonggp.mongodb.net/lab?retryWrites=true&w=majority`;
@@ -34,7 +34,7 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
 
-// --- API ROUTES ---
+
 
 // Signup Route
 app.post('/createUser', async (req, res) => {
@@ -69,7 +69,7 @@ app.get('/getUser', async (req, res) => {
     }
 });
 
-// 5. Start Server
+// Start Server
 const PORT = 9000;
 app.listen(PORT, () => {
     console.log(`Server Started at port ${PORT}`);
