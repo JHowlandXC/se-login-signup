@@ -9,9 +9,9 @@ function ViewProjects() {
     }, []);
 
     return (
-        <div>
+        <div className="table-container">
             <h2>Project List</h2>
-            <table border="1" style={{width: '100%', textAlign: 'left'}}>
+            <table>
                 <thead>
                     <tr>
                         <th>Project Name</th>
@@ -36,3 +36,4 @@ function ViewProjects() {
         </div>
     );
 }
+export default ViewProjects;

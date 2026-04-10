@@ -2,14 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-const User = require('./userSchema'); 
-const Team = require('./models/Team'); 
-const Project = require('./models/Project');
-
 const app = express();
 app.use(express.json());
 app.use(cors());
 
+// MongoDB Connection
 const dbUser = "jhowland022";
 const dbPass = encodeURIComponent("S1mp13loo!#@"); 
 const mongoString = `mongodb+srv://${dbUser}:${dbPass}@homework2.sjonggp.mongodb.net/lab?retryWrites=true&w=majority`;
@@ -17,45 +14,48 @@ const mongoString = `mongodb+srv://${dbUser}:${dbPass}@homework2.sjonggp.mongodb
 mongoose.connect(mongoString);
 mongoose.connection.once('connected', () => console.log('Database Connected Successfully'));
 
-// ROUTES
+// --- SCHEMAS ---
+const User = mongoose.model('User', new mongoose.Schema({
+    firstName: String, lastName: String, username: { type: String, unique: true }, password: { type: String }
+}));
+
+const Team = mongoose.model('Team', new mongoose.Schema({
+    teamName: { type: String, unique: true }
+}));
+
+const Project = mongoose.model('Project', new mongoose.Schema({
+    name: String,
+    description: String,
+    productOwner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    manager: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' }
+}));
+
+// --- ROUTES ---
 app.post('/createUser', async (req, res) => {
     try {
         const user = new User(req.body);
         await user.save();
         res.send(user);
-    } catch (error) { res.status(500).send("User already exists"); }
+    } catch (err) { res.status(400).send("User exists"); }
 });
 
-app.get('/getUser', async (req, res) => {
-    const { username, password } = req.query;
-    const user = await User.findOne({ username, password });
-    res.send(user); 
-});
-
-app.get('/allUsers', async (req, res) => {
-    const users = await User.find({});
-    res.send(users);
-});
+app.get('/allUsers', async (req, res) => res.send(await User.find({})));
 
 app.post('/createTeam', async (req, res) => {
     try {
         const team = new Team(req.body);
         await team.save();
-        res.status(201).send(team);
-    } catch (err) { res.status(500).send(err); }
+        res.send(team);
+    } catch (err) { res.status(400).send("Team exists"); }
 });
 
-app.get('/getTeams', async (req, res) => {
-    const teams = await Team.find({});
-    res.send(teams);
-});
+app.get('/getTeams', async (req, res) => res.send(await Team.find({})));
 
 app.post('/createProject', async (req, res) => {
-    try {
-        const project = new Project(req.body);
-        await project.save();
-        res.status(201).send(project);
-    } catch (err) { res.status(500).send(err); }
+    const project = new Project(req.body);
+    await project.save();
+    res.send(project);
 });
 
 app.get('/getProjects', async (req, res) => {

@@ -1,27 +1,29 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Login from './Login';
-import Signup from './Signup';
-import CreateTeam from './CreateTeam';
-import CreateProject from './CreateProject';
-import ViewProjects from './ViewProjects';
+
+// TEMPORARY: Simple components to test routing
+const Home = () => <div className="form-container"><h1>Home Page</h1></div>;
+const Login = () => <div className="form-container"><h1>Login Page</h1></div>;
+const Signup = () => <div className="form-container"><h1>Signup Page</h1></div>;
 
 function App() {
   return (
     <Router>
-      <nav style={{ padding: '10px', backgroundColor: '#eee' }}>
-        <Link to="/">Login</Link> | <Link to="/signup">Signup</Link> | 
-        <Link to="/create-team">Create Team</Link> | 
-        <Link to="/create-project">Create Project</Link> | 
-        <Link to="/view-projects">View Projects</Link>
+      <nav style={{ padding: '10px', backgroundColor: '#333', color: 'white', display: 'flex', gap: '15px' }}>
+        <Link to="/" style={{ color: 'white' }}>Home</Link>
+        <Link to="/login" style={{ color: 'white' }}>Login</Link>
+        <Link to="/signup" style={{ color: 'white' }}>Signup</Link>
       </nav>
 
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/create-team" element={<CreateTeam />} />
-        <Route path="/create-project" element={<CreateProject />} />
-        <Route path="/view-projects" element={<ViewProjects />} />
-      </Routes>
+      <div style={{ padding: '20px' }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
+
+export default App;

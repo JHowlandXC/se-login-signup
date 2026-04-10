@@ -4,25 +4,21 @@ import axios from 'axios';
 function CreateProject() {
     const [users, setUsers] = useState([]);
     const [teams, setTeams] = useState([]);
-    const [form, setForm] = useState({ 
-        name: '', description: '', productOwner: '', manager: '', team: '' 
-    });
+    const [form, setForm] = useState({ name: '', description: '', productOwner: '', manager: '', team: '' });
 
     useEffect(() => {
-        // Fetch users for the dropdowns
         axios.get('http://localhost:9000/allUsers').then(res => setUsers(res.data));
-        // Fetch teams for the dropdown
         axios.get('http://localhost:9000/getTeams').then(res => setTeams(res.data));
     }, []);
 
     const handleSubmit = () => {
         axios.post('http://localhost:9000/createProject', form)
-            .then(() => alert("Project Created successfully!"))
-            .catch(err => alert("Error creating project. Ensure all fields are selected."));
+            .then(() => alert("Project Created!"))
+            .catch(err => console.log(err));
     };
 
     return (
-        <div className="form-container">
+        <div className="form-card">
             <h2>Create Project</h2>
             <input placeholder="Project Name" onChange={e => setForm({...form, name: e.target.value})} />
             <textarea placeholder="Description" onChange={e => setForm({...form, description: e.target.value})} />
@@ -45,9 +41,8 @@ function CreateProject() {
                 {teams.map(t => <option key={t._id} value={t._id}>{t.teamName}</option>)}
             </select>
 
-            <button type="button" onClick={handleSubmit}>Create Project</button>
+            <button onClick={handleSubmit}>Create Project</button>
         </div>
     );
 }
-
 export default CreateProject;
