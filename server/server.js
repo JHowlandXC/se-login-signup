@@ -16,15 +16,18 @@ mongoose.connection.once('connected', () => console.log('Database Connected Succ
 
 // --- SCHEMAS ---
 const User = mongoose.model('User', new mongoose.Schema({
-    firstName: String, lastName: String, username: { type: String, unique: true }, password: { type: String }
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true }
 }));
 
 const Team = mongoose.model('Team', new mongoose.Schema({
-    teamName: { type: String, unique: true }
+    teamName: { type: String, required: true, unique: true }
 }));
 
 const Project = mongoose.model('Project', new mongoose.Schema({
-    name: String,
+    name: { type: String, required: true },
     description: String,
     productOwner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     manager: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -32,35 +35,46 @@ const Project = mongoose.model('Project', new mongoose.Schema({
 }));
 
 // --- ROUTES ---
+
+// Signup & User list
 app.post('/createUser', async (req, res) => {
     try {
         const user = new User(req.body);
         await user.save();
-        res.send(user);
-    } catch (err) { res.status(400).send("User exists"); }
+        res.status(201).send(user);
+    } catch (err) { res.status(400).send("User already exists"); }
 });
 
 app.get('/allUsers', async (req, res) => res.send(await User.find({})));
 
+// Teams
 app.post('/createTeam', async (req, res) => {
     try {
         const team = new Team(req.body);
         await team.save();
-        res.send(team);
-    } catch (err) { res.status(400).send("Team exists"); }
+        res.status(201).send(team);
+    } catch (err) { res.status(400).send("Team already exists"); }
 });
 
 app.get('/getTeams', async (req, res) => res.send(await Team.find({})));
 
+// Projects
 app.post('/createProject', async (req, res) => {
-    const project = new Project(req.body);
-    await project.save();
-    res.send(project);
+    try {
+        const project = new Project(req.body);
+        await project.save();
+        res.status(201).send(project);
+    } catch (err) { res.status(500).send(err.message); }
 });
 
 app.get('/getProjects', async (req, res) => {
-    const projects = await Project.find({}).populate('productOwner manager team');
+    // Populate turns IDs into full Objects so we can see names in the table
+    const projects = await Project.find({})
+        .populate('productOwner')
+        .populate('manager')
+        .populate('team');
     res.send(projects);
 });
 
-app.listen(9000, () => console.log(`Server running on port 9000`));
+const PORT = 9000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

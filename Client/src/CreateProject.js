@@ -4,7 +4,9 @@ import axios from 'axios';
 function CreateProject() {
     const [users, setUsers] = useState([]);
     const [teams, setTeams] = useState([]);
-    const [form, setForm] = useState({ name: '', description: '', productOwner: '', manager: '', team: '' });
+    const [form, setForm] = useState({ 
+        name: '', description: '', productOwner: '', manager: '', team: '' 
+    });
 
     useEffect(() => {
         axios.get('http://localhost:9000/allUsers').then(res => setUsers(res.data));
@@ -14,7 +16,7 @@ function CreateProject() {
     const handleSubmit = () => {
         axios.post('http://localhost:9000/createProject', form)
             .then(() => alert("Project Created!"))
-            .catch(err => console.log(err));
+            .catch(err => alert("Error creating project. Check all fields."));
     };
 
     return (
@@ -41,8 +43,9 @@ function CreateProject() {
                 {teams.map(t => <option key={t._id} value={t._id}>{t.teamName}</option>)}
             </select>
 
-            <button onClick={handleSubmit}>Create Project</button>
+            <button onClick={handleSubmit}>Save Project</button>
         </div>
     );
 }
+
 export default CreateProject;
