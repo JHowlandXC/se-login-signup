@@ -37,7 +37,6 @@ const teamSchema = new mongoose.Schema({
 const Team = mongoose.model('Team', teamSchema);
 
 // Project Schema 
-// Note: productOwner, manager, and team are References (ObjectIds)
 const projectSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String },
